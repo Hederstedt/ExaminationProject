@@ -5,26 +5,26 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Logga in";
 }
 
 <h2>@ViewData["Title"].</h2>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <section>
             <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-                <h4>Use a local account to log in.</h4>
+                <h4>Använd ditt lokala konto för att logga in.</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="Email" class="col-md-2 control-label"></label>
+                    <label asp-for="UserName" class="col-md-2 control-label">Användarnamn:</label>
                     <div class="col-md-10">
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Password" class="col-md-2 control-label"></label>
+                    <label asp-for="Password" class="col-md-2 control-label">Lösenord:</label>
                     <div class="col-md-10">
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
@@ -46,15 +46,15 @@
                     </div>
                 </div>
                 <p>
-                    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
+                    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Registrera som ny användare här</a>
                 </p>
                 <p>
-                    <a asp-action="ForgotPassword">Forgot your password?</a>
+                    <a asp-action="ForgotPassword" class="btn btn-default">Glömt ditt lösenord? ingen fara klicka här</a>
                 </p>
             </form>
         </section>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 verticalLine">
         <section>
             <h4>Use another service to log in.</h4>
             <hr />
@@ -64,7 +64,7 @@
                 {
                     <div>
                         <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                            There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
                             for details on setting up this ASP.NET application to support logging in via external services.
                         </p>
                     </div>
@@ -76,7 +76,28 @@
                             <p>
                                 @foreach (var provider in loginProviders)
                                 {
-                                    <button type="submit" class="btn btn-default" name="provider" value="@provider.AuthenticationScheme" title="Log in using your @provider.DisplayName account">@provider.AuthenticationScheme</button>
+                                    if (provider.DisplayName == "Facebook")
+                                    {
+                                        <button type="submit" class="btn btn-primary" name="provider" value="@provider.AuthenticationScheme" title="Log in using your @provider.DisplayName account">
+                                            <i class="fa fa-facebook-official"></i>
+                                            @provider.AuthenticationScheme
+                                        </button>
+                                    }
+                                    if (provider.DisplayName == "Twitter")
+                                    {
+                                        <button type="submit" class="btn btn-primary" name="provider" value="@provider.AuthenticationScheme" title="Log in using your @provider.DisplayName account">
+                                            <i class="fa fa-twitter"></i>
+                                            @provider.AuthenticationScheme
+                                        </button>
+                                    }
+                                    if (provider.DisplayName == "Google")
+                                    {
+                                        <button type="submit" class="btn btn-danger" name="provider" value="@provider.AuthenticationScheme" title="Log in using your @provider.DisplayName account">
+                                            <i class="fa fa-google-plus-official"></i>
+                                            @provider.AuthenticationScheme
+                                        </button>
+                                    }
+
                                 }
                             </p>
                         </div>

@@ -12,6 +12,10 @@ using Microsoft.Extensions.Options;
 using ExaminationProject.Models;
 using ExaminationProject.Models.AccountViewModels;
 using ExaminationProject.Services;
+using ExaminationProject.HelperClasses;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
+using System.IO;
 
 namespace ExaminationProject.Controllers
 {
@@ -66,7 +70,7 @@ namespace ExaminationProject.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
@@ -112,7 +116,12 @@ namespace ExaminationProject.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+                using (var memorystream = new MemoryStream())
+                {
+                    await model.AvatarImage.CopyToAsync(memorystream);
+                    user.ProfilePic = memorystream.ToArray();
+                }
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -195,7 +204,27 @@ namespace ExaminationProject.Controllers
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+                var userName = info.Principal.FindFirstValue(ClaimTypes.Name);
+                string previewPicUrl = "~/wwwroot/images/placeholderpic.png";
+                if (info.LoginProvider == "Facebook")
+                {
+                    previewPicUrl = "https://graph.facebook.com/" + info.ProviderKey + "/picture?type=large&redirect=true&width=500&height=500";
+                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email, previewPic = previewPicUrl });
+                }
+                if (info.LoginProvider == "Twitter")
+                {
+                    previewPicUrl = "https://twitter.com/" + userName + "/profile_image?size=original";
+                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { UserName = userName, previewPic = previewPicUrl });
+                }
+                if (info.LoginProvider == "Google")
+                {
+                    previewPicUrl = "https://plus.google.com/s2/photos/profile/me";
+                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { UserName = userName, Email = email, previewPic = previewPicUrl });
+                }
+                else
+                {
+                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+                }
             }
         }
 
@@ -214,7 +243,40 @@ namespace ExaminationProject.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+                if (model.AvatarImage == null && info.LoginProvider == "Facebook")
+                {
+                    HttpResponseMessage respone = await ApiHelper.client.GetAsync("https://graph.facebook.com/" + info.ProviderKey + "/picture?type=large&redirect=true&width=500&height=500");
+                    if (respone.IsSuccessStatusCode)
+                    {
+                        user.ProfilePic = await respone.Content.ReadAsByteArrayAsync();
+                    }
+
+                }
+                if (model.AvatarImage == null && info.LoginProvider == "Twitter")
+                {
+                    HttpResponseMessage respone = await ApiHelper.client.GetAsync("https://twitter.com/" + model.UserName + "/profile_image?size=original");
+                    if (respone.IsSuccessStatusCode)
+                    {
+                        user.ProfilePic = await respone.Content.ReadAsByteArrayAsync();
+                    }
+                }
+                if (model.AvatarImage == null && info.LoginProvider == "Google")
+                {
+                    HttpResponseMessage respone = await ApiHelper.client.GetAsync("https://www.googleapis.com/plus/v1/people/" + info.ProviderKey + "?fields=image&key=AIzaSyBvcRs9rAZFYtCRWGtJIIfVMSfXOL8bP2I");
+                    if (respone.IsSuccessStatusCode)
+                    {
+                        user.ProfilePic = await respone.Content.ReadAsByteArrayAsync();
+                    }
+                }
+                else if (model.AvatarImage != null)
+                {
+                    using (var memorystream = new MemoryStream())
+                    {
+                        await model.AvatarImage.CopyToAsync(memorystream);
+                        user.ProfilePic = memorystream.ToArray();
+                    }
+                }
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

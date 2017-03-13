@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using ExaminationProject.Data;
 
-namespace ExaminationProject.Data.Migrations
+namespace ExaminationProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170311002343_test")]
-    partial class test
+    [Migration("20170313230420_test1")]
+    partial class test1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,6 +67,104 @@ namespace ExaminationProject.Data.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjectCommentModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Author");
+
+                    b.Property<Guid?>("ProjectModelId");
+
+                    b.Property<string>("Text");
+
+                    b.Property<DateTime>("TimeStamp");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectModelId");
+
+                    b.ToTable("ProjectCommentModels");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectContentModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("ProjectModelId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectModelId");
+
+                    b.ToTable("ProjectContentModels");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectHeadersModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Header");
+
+                    b.Property<Guid?>("ProjectContentModelId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectContentModelId");
+
+                    b.ToTable("ProjectHeadersModels");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectImageModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("ProjectContentModelId");
+
+                    b.Property<byte[]>("WorkImage");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectContentModelId");
+
+                    b.ToTable("ProjectImageModels");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ApplicationUserId");
+
+                    b.Property<string>("ProjectName");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("ProjectModels");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectTextModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("ProjectContentModelId");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectContentModelId");
+
+                    b.ToTable("ProjectTextModels");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
@@ -174,6 +272,48 @@ namespace ExaminationProject.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjectCommentModel", b =>
+                {
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProjectModelId");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectContentModel", b =>
+                {
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel")
+                        .WithMany("ProjectContent")
+                        .HasForeignKey("ProjectModelId");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectHeadersModel", b =>
+                {
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel")
+                        .WithMany("Headers")
+                        .HasForeignKey("ProjectContentModelId");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectImageModel", b =>
+                {
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel")
+                        .WithMany("WorkImages")
+                        .HasForeignKey("ProjectContentModelId");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectModel", b =>
+                {
+                    b.HasOne("ExaminationProject.Models.ApplicationUser")
+                        .WithMany("Projects")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectTextModel", b =>
+                {
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel")
+                        .WithMany("Texts")
+                        .HasForeignKey("ProjectContentModelId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

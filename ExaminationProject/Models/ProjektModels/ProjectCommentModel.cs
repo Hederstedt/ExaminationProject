@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace ExaminationProject.Models
 {
-    public class CommentModel
+    public class ProjectCommentModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Author { get; set; }
         public string Text { get; set; }
+        public DateTime TimeStamp { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ExaminationProject.Models.ProjektModels;
 
 namespace ExaminationProject.Models
 {
@@ -10,5 +11,6 @@ namespace ExaminationProject.Models
     public class ApplicationUser : IdentityUser
     {
         public byte[] ProfilePic { get; set; }
+        public virtual IList<ProjectModel> Projects { get; set; }
     }
 }

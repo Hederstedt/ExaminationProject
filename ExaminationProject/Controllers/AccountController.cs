@@ -117,11 +117,15 @@ namespace ExaminationProject.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
-                using (var memorystream = new MemoryStream())
+                if (model.AvatarImage != null)
                 {
-                    await model.AvatarImage.CopyToAsync(memorystream);
-                    user.ProfilePic = memorystream.ToArray();
+                    using (var memorystream = new MemoryStream())
+                    {
+                        await model.AvatarImage.CopyToAsync(memorystream);
+                        user.ProfilePic = memorystream.ToArray();
+                    }
                 }
+               
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

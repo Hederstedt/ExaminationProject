@@ -8,53 +8,60 @@
 <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" enctype="multipart/form-data">
     <h4>Skapa ett nytt konto.</h4>
     <hr />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        
-        <label asp-for="AvatarImage" class="col-md-2  col-md-offset-2 control-label"><img id="RegPageImage" src="@Url.Action("ProfilePic", "Home")" class="profilePicRoundMedium" /></label>
-        <div class="inputremove">
-            <input @*id="RegPageInput"*@ asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild"+
-                   onchange="document.getElementById('RegPageImage').src = window.URL.createObjectURL(this.files[0])"/>            
-        </div>
-        
-    </div> 
-    <span class="col-md-3 col-md-offset-2">Klicka på bilden för att ändra</span>
-    <hr />
-    <div class="form-group">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
 
-        <label asp-for="UserName" class="col-md-2 control-label">användarnamn</label>
-        <div class="col-md-10">
-            <input asp-for="UserName" class="form-control" />
-            <span asp-validation-for="UserName" class="text-danger"></span>
+                <label asp-for="AvatarImage" class="col-md-2  col-md-offset-2 control-label"><img id="RegPageImage" src="@Url.Action("ProfilePic", "Home")" class="profilePicRoundMedium" /></label>
+                <div class="inputremove">
+                    <input @*id="RegPageInput" *@ asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild" +
+                           onchange="document.getElementById('RegPageImage').src = window.URL.createObjectURL(this.files[0])" />
+                </div>
+
+            </div>
+            <span class="col-md-12 col-md-offset-2">Klicka på bilden för att ändra</span>
+        </div>
+        <div class="col-md-8">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+
+                <label asp-for="UserName" class="col-md-2 control-label">användarnamn</label>
+                <div class="col-md-10">
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="col-md-2 control-label">Lösenord</label>
+                <div class="col-md-10">
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-success">Register</button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Email" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password" class="col-md-2 control-label">Lösenord</label>
-        <div class="col-md-10">
-            <input asp-for="Password" class="form-control" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="ConfirmPassword" class="form-control" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        </div>
-    </div>
-   
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-success">Register</button>
-        </div>
-    </div>
+  
 </form>
 
 @section Scripts {

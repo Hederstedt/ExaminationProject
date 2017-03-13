@@ -41,6 +41,33 @@ textarea {
     width: 100%;
 }
 
+/***********************Min css*****************************************************/
+.profilePicsmall {
+    width: 50px;
+    height: 50px;
+    border: solid 2px;
+    border-radius: 6px;
+}
+
+.profilePicRoundMedium {
+    width: 160px;
+    height: 160px;
+    background: #FFFFFF;
+    margin: auto;
+    -moz-border-radius: 60px;
+    border-radius: 100px;
+    padding: 6px;
+    box-shadow: 0px 0px 20px #888;
+}
+
+.verticalLine {
+    border-left: thick solid black;
+}
+
+.inputremove > input {
+    display: none;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */

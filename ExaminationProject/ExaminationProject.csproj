@@ -11,6 +11,11 @@
   <PropertyGroup>
     <UserSecretsId>aspnet-ExaminationProject-a7490ecc-8d68-4219-8ef3-2802e1b0dd19</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\js\comment.jsx" />
+    <Content Include="wwwroot\js\ProjectPage.jsx" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />

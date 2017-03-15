@@ -1,0 +1,11 @@
+@using Microsoft.AspNetCore.Identity
+@using ExaminationProject.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage"><img id="RegPageImage" src="@Url.Action("ProfilePic", "Home")" class="profilePicRoundMedium" /></a>
+}
+

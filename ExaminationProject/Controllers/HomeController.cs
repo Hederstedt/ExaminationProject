@@ -31,7 +31,7 @@ namespace ExaminationProject.Controllers
         {
             return View();
         }
-
+        [Route("profilePic")]
         public IActionResult ProfilePic()
         {
             string fileName = Path.Combine(_environment.WebRootPath, "images/placeholderpic.png");

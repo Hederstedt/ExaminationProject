@@ -14,7 +14,7 @@
 
                 <label asp-for="AvatarImage" class="col-md-2  col-md-offset-2 control-label"><img id="RegPageImage" src="@Url.Action("ProfilePic", "Home")" class="profilePicRoundMedium" /></label>
                 <div class="inputremove">
-                    <input @*id="RegPageInput" *@ asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild" +
+                    <input asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild" 
                            onchange="document.getElementById('RegPageImage').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
 

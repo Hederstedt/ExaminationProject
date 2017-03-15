@@ -4,10 +4,13 @@ class Project extends React.Component {
         super(props);
         this.AddTextBox = this.AddTextBox.bind(this);
         this.changeEvent = this.changeEvent.bind(this);
+        this.changeImageUrl = this.changeImageUrl.bind(this);
+        this.AddImageBox = this.AddImageBox.bind(this);
         this.state = {
             error: "problems",
             texter: textLista,
-            textarea:"" 
+            textarea: "",
+            imageUrl: "/profilePic"
         };
     }
     AddTextBox(e) {
@@ -18,18 +21,52 @@ class Project extends React.Component {
             textarea: ""
         })
     }
+    AddImageBox(e) {
+        let newImg = this.state.texter;
+        let reader = new FileReader();
+
+        newImg.push(this.state.imageUrl);
+
+        this.setState({
+            texter: newImg,
+            imageUrl: reader.result
+        })
+        reader.readAsDataURL(this.state.imageUrl)
+    }
     changeEvent(e) {
         this.setState({
             textarea: e.target.value
         });
     }
+    changeImageUrl(e) {
+        e.preventDefault();
+        let lista = this.state.texter;
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.readAsDataURL(file)
+
+
+        reader.onloadend = () => {
+            let ri = reader.result;
+            lista.push(ri)
+            this.setState({
+                imageUrl: reader.result,
+                texter: lista
+            });
+        }
+
+    }
+    /***************************************Det som skall renderas ut skriver du här************/
     render() {
         return (
-            <div>                
-                <FilterBox />
+            <div>
+                <ImageBox ImageUrl={this.state.imageUrl} previewImage={this.changeImageUrl} />
+                <ListBox data={this.state.texter} pfile={this.state.imageUrl} />
                 <br />
                 <TextBox textarea={this.state.textarea} changeEvent={this.changeEvent} />
-                <ButtonBox AddTextBox={this.AddTextBox} />
+                <br />
+                <br />
+                <ButtonBox addTextBox={this.AddTextBox} addImageBox={this.AddImageBox} />
             </div>);
     }
 }
@@ -37,11 +74,16 @@ class Project extends React.Component {
 class FilterBox extends React.Component {
     render() {
         return (<label className="labelfilter">Filter&nbsp;&nbsp;<input className="inputfilter" placeholder="Sök här" /></label>);
-   }
+    }
 }
 class ButtonBox extends React.Component {
     render() {
-        return (<button className="btn btn-primary btn-lg" onClick={this.props.AddTextBox}><i className="fa fa-plus-square" aria-hidden="true"></i></button>);
+        return (
+            <div>
+                <button className="btn btn-primary btn-lg" onClick={this.props.addTextBox}><i className="fa fa-plus-square" aria-hidden="true"></i></button>
+                <button className="btn btn-primary btn-lg" onClick={this.props.addImageBox}><i className="fa fa-plus-square" aria-hidden="true"></i></button>
+            </div>
+        );
     }
 }
 class TextBox extends React.Component {
@@ -49,20 +91,57 @@ class TextBox extends React.Component {
         return (<textarea className="col-md-10 col-md-offset-2" onChange={this.props.changeEvent} value={this.props.textarea}></textarea>);
     }
 }
-//class ButtonBox extends React.Component {
-//    render() {
-//        retun(
-//            <button className="btn btn-success btn-lg" onClick={this.props.AddTextBox}><i className="fa fa-plus-square" aria-hidden="true"></i></button>
-//        );
-//    }
-//}
+class ListBox extends React.Component {
+    render() {
+        let oldLista = this.props.data;
+        let key = 0;
+        let newLista;
+        let pfile = this.props.fpile;
+            newLista = oldLista.map((x, index) => <div key={index}> <li>
+                <label className="inputremove"><img src={x} />
+                    <input className="profilePic" type="file" accept=".png, .jpg, .gif, .jpeg, .tif" alt="Ändra bild?"
+                        onChange={this.props.previewImage} />
+                </label>
+            </li>
+            </div>
+            );
+        return (<ul>{newLista}</ul>);
+    }
+}
+class ImageBox extends React.Component {
+    render() {
 
+        return (
+            <div className="inputremove">
+                <label htmlFor="inputWorkImage"><img id="test" src={this.props.ImageUrl} /></label>
+                <input id="inputWorkImage" className="profilePic" type="file" accept=".png, .jpg, .gif, .jpeg, .tif" alt="Ändra bild?"
+                    onChange={this.props.previewImage} />
+            </div>
+        );
+
+    }
+}
 
 /***********************slut på React dax att rendera ut **********************************/
 ReactDOM.render(<Project />, document.getElementById('projectContent'));
 
 
 /***************************temp**************************************/
+/*
+                {document.getElementById('test').src = window.URL.createObjectURL(this.files[0])}
+                <label asp-for="AvatarImage" class="col-md-2  col-md-offset-2 control-label"><img id="RegPageImage" src="@Url.Action(" ProfilePic", "Home")" class="profilePicRoundMedium" /></label>
+    <div class="inputremove">
+        <input asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild"
+            onchange="document.getElementById('RegPageImage').src = window.URL.createObjectURL(this.files[0])" />
+    </div>*/
+
+
+
+
+
+
+
+
 //let apiData;
 //let landList = [];
 //let listElement;

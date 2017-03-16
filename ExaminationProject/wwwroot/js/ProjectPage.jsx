@@ -1,37 +1,31 @@
-﻿let textLista = [];
+﻿let textLista = [{ Header: "Rubrik", Image:"/profilePic", Text: ""}];
 class Project extends React.Component {
     constructor(props) {
         super(props);
-        this.AddTextBox = this.AddTextBox.bind(this);
         this.changeEvent = this.changeEvent.bind(this);
         this.changeImageUrl = this.changeImageUrl.bind(this);
-        this.AddImageBox = this.AddImageBox.bind(this);
+        this.HandleAddObject = this.HandleAddObject.bind(this);
         this.changeImageUrl = this.changeImageUrl.bind(this);
         this.liClickevent = this.liClickevent.bind(this);
+        this.Handleheader = this.Handleheader.bind(this);
+        this.HandleheadertextEvent = this.HandleheadertextEvent.bind(this);
+        this.hide = this.hide.bind(this);
+        this.HandleSubmit = this.HandleSubmit.bind(this);
         this.state = {
             error: "problems",
-            texter: textLista,
+            workList: textLista,
             textarea: "",
             imageUrl: "/profilePic",
-            isImage: true,
-            selectedIndex: index
+            selectedIndex: null,
+            Header: "Rubrik",
+            headerText: ""
         };
     }
-    AddTextBox(e) {
-        let newtxt = this.state.texter;
-        newtxt.push(this.state.textarea);
+ HandleAddObject(e) {
+        let lista = this.state.workList;
+        lista.push({Header: "Rubrik", Image: "/profilePic", Text:"skriv text här"});
         this.setState({
-            isImage: false,
-            texter: newtxt,
-            textarea: ""
-        })
-    }
-    AddImageBox(e) {
-        let lista = this.state.texter;
-        lista.push("/profilePic");
-        this.setState({
-            isImage: true,
-            texter: lista,
+            workList: lista,
             imageUrl: "/profilePic"
         })
     }
@@ -42,16 +36,17 @@ class Project extends React.Component {
     }
     changeImageUrl(e) {
         e.preventDefault();
-        let lista = this.state.texter;
+        let lista = this.state.workList;
         let reader = new FileReader();
         let file = e.target.files[0];
         reader.readAsDataURL(file)
         reader.onloadend = () => {
             let ri = reader.result;
-            lista.splice(this.state.selectedIndex, 1, ri)
+            lista[this.state.selectedIndex].Image = ri;
             this.setState({
                 imageUrl: reader.result,
-                texter: lista
+                workList: lista,
+                selectedIndex: null
             });
         }
     }
@@ -60,37 +55,66 @@ class Project extends React.Component {
             selectedIndex: index
         })
     }
-        /*<ImageBox ImageUrl={this.state.imageUrl} previewImage={this.changeImageUrl} />*/
-        /***************************************Det som skall renderas ut skriver du här************/
-        render() {
-            return (
-                <div className="col-md-12">
-                    <ListBox data={this.state.texter}
-                        pfile={this.state.imageUrl}
+    Handleheader(e) {
+        let lista = this.state.workList;
+        let newHeader = this.state.headerText;
+        lista[this.state.selectedIndex].Header = newHeader;
+        this.setState({
+            workList: lista,
+            headerText: "",
+            selectedIndex: null
+        })
+    }
+    HandleheadertextEvent(e) {
+        this.setState({
+            headerText: e.target.value
+        });
+    }
+    hide(e) {
+        this.setState({
+            selectedIndex: null
+        })
+    }
+    HandleSubmit(e)
+    {
+        let data = this.state.workList;
+        let xhr = new XMLHttpRequest();
+        xhr.open('post', this.props.submitUrl, true);
+        xhr.send(data);
+    }
+/***************************************Det som skall renderas ut skriver du här************/
+    render() {
+        return (
+            <div className="" style={{ backgroundColor: "#377dc8"}}>
+                    <ListBox data={this.state.workList}
                         previewImage={this.changeImageUrl}
                         isImage={this.state.isImage}
                         liClickevent={this.liClickevent}
+                        header={this.state.Header}
+                        selectedIndex={this.state.selectedIndex}
+                        changeHeader={this.Handleheader}
+                        headerText={this.state.headerText}
+                        visable={this.state.visableInput}
+                        hide={this.hide}
+                        headertextEvent={this.HandleheadertextEvent}
                     />
                     <br />
-                    <TextBox textarea={this.state.textarea} changeEvent={this.changeEvent} />
                     <br />
                     <br />
-                    <ButtonBox addTextBox={this.AddTextBox} addImageBox={this.AddImageBox} />
+                    <ButtonBox addObject={this.HandleAddObject} submit={this.HandleSubmit}/>
                 </div>);
         }
     }
 /****************************************Slut på project classen **************************/
-class FilterBox extends React.Component {
-    render() {
-        return (<label className="labelfilter">Filter&nbsp;&nbsp;<input className="inputfilter" placeholder="Sök här" /></label>);
-    }
-}
+
 class ButtonBox extends React.Component {
     render() {
         return (
-            <div className="col-md-12 ">
-                <button className="btn btn-primary btn-lg col-md-4" onClick={this.props.addTextBox}><i className="fa fa-plus-square" aria-hidden="true"></i></button>
-                <button className="btn btn-primary btn-lg col-md-4" onClick={this.props.addImageBox}><i className="fa fa-plus-square" aria-hidden="true"></i></button>
+            <div className="col-md-12">
+                <button className="btn btn-primary btn-lg col-md-4" onClick={this.props.addObject}><i className="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Lägg till ett steg</button>
+                
+                <button className="btn btn-success btn-lg col-md-4" onClick={this.props.submit}><i className="fa fa-cloud" aria-hidden="true"></i>&nbsp;Spara</button>
+
             </div>
         );
     }
@@ -107,268 +131,40 @@ class ListBox extends React.Component {
     render() {
         let oldLista = this.props.data;
         let newLista;
-        if (this.props.isImage) {
-            newLista = oldLista.map((x, index) => <div key={index}>
-                <li onClick={this.handleClick.bind(this, index, { x })}>
-                    <img src={x} />
-                </li>
-                <input className="btn btn-Info btn-lg" value="Ändra bild" type="file" accept=".png, .jpg, .gif, .jpeg, .tif" alt="Ändra bild?"
-                    onChange={this.props.previewImage} />
+        newLista = oldLista.map((x, index) => <div key={index} onMouseOver={this.handleClick.bind(this, index, { x })} onMouseLeave={this.props.hide}>
+            <div className="row">
+                <div className="col-md-6">
+                    <li ><h3>{x.Header}</h3></li>
+                </div>
+                <div className="col-md-6">
+                    <input className={this.props.selectedIndex === index ? '' : 'hidden'} type="text" value={this.props.headerText} onChange={this.props.headertextEvent}/>
+                    <button className="btn btn-info btn-lg" onClick={this.props.changeHeader}>Ändra Rubrik</button>
+                    <br />
+                    <label className="btn btn-info btn-lg inputremove">
+                        Ändra bild
+                    <input type="file" accept=".png, .jpg, .gif, .jpeg, .tif" alt="Ändra bild?"
+                            onChange={this.props.previewImage} /></label>
+                </div>
+            </div>
+                       
+                <img src={x.Image} />
+              
+                <br />
+                <textarea className="col-md-10 center " onChange={this.props.changeEvent} value={this.props.textarea}></textarea>
+                <br />
+            <br/>
             </div>
             );
-            return (<ul>{newLista}</ul>);
-        }
-        else {
-            newLista = oldLista.map((x, index) => <div key={index}>
-                <li>
-                    {x}
-                </li>
-            </div>
-            );
-            return (<ul>{newLista}</ul>);
-        }
+            return (<ol>{newLista}</ol>);
+ 
 
     }
 }
-class ImageBox extends React.Component {
-    render() {
 
-        return (
-            <div className="inputremove">
-                <label htmlFor="inputWorkImage"><img id="test" src={this.props.ImageUrl} /></label>
-                <input id="inputWorkImage" className="profilePic" type="file" accept=".png, .jpg, .gif, .jpeg, .tif" alt="Ändra bild?"
-                    onChange={this.props.previewImage} />
-            </div>
-        );
-
-    }
-}
 
 /***********************slut på React dax att rendera ut **********************************/
-ReactDOM.render(<Project />, document.getElementById('projectContent'));
+ReactDOM.render(<Project submitUrl="/project/data" />, document.getElementById('projectContent'));
 
 
 /***************************temp**************************************/
-/*
-  <li>
-                    <label className="inputremove"><img src={x} />
-                        <input className="profilePic" type="file" accept=".png, .jpg, .gif, .jpeg, .tif" alt="Ändra bild?"
-                            onChange={this.props.previewImage} />
-                    </label>
-                </li>
-
-
-
-
-
-
-                {document.getElementById('test').src = window.URL.createObjectURL(this.files[0])}
-                <label asp-for="AvatarImage" class="col-md-2  col-md-offset-2 control-label"><img id="RegPageImage" src="@Url.Action(" ProfilePic", "Home")" class="profilePicRoundMedium" /></label>
-    <div class="inputremove">
-        <input asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild"
-            onchange="document.getElementById('RegPageImage').src = window.URL.createObjectURL(this.files[0])" />
-    </div>
-
-
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-//let apiData;
-//let landList = [];
-//let listElement;
-//class App extends React.Component {
-//    constructor(props) {
-//        super(props);
-//        this.liClickevent = this.liClickevent.bind(this);
-//        this.filterTextChange = this.filterTextChange.bind(this);
-//        this.delClick = this.delClick.bind(this);
-//        this.inputText = this.inputText.bind(this);
-//        this.blur = this.blur.bind(this);
-//        this.state =
-//            {
-//                error: 'noProblemo',
-//                count: 3,
-//                lista: landList,
-//                filterText: '',
-//                selectedCountryIndex: null
-//            };
-//    }
-
-//    filterTextChange(e) {
-//        this.setState(
-//            {
-//                filterText: e.target.value
-//            });
-//    }
-
-//    delClick(e) {
-//        let countries = this.state.lista;
-//        countries.splice(this.state.selectedCountryIndex, 1);
-//        this.setState({
-//            lista: countries,
-//            selectedCountryIndex: null
-//        })
-//    }
-
-//    liClickevent(index) {
-//        this.setState({
-//            selectedCountryIndex: index
-//        })
-
-//    }
-//    inputText(e) {
-//        const newTxt = e.target.value;
-//        let countries = this.state.lista;
-//        countries.splice(this.state.selectedCountryIndex, 1, newTxt);
-//        this.setState({
-//            lista: countries
-//        })
-//    }
-//    blur(e) {
-//        this.setState({
-//            selectedCountryIndex: null
-//        })
-//    }
-
-//    render() {
-//        if (this.state.count > 0) {
-//            if (this.state.count % 2 == 0) {
-//                return (<div><span className="spancountdownmo">Din data är klar om: {this.state.count} sekunder</span></div>);
-//            }
-//            else {
-//                return (<div><span className="spancountdown">Din data är klar om: {this.state.count} sekunder</span></div>);
-//            }
-
-//        }
-//        else {
-//            console.log(this.state.error)
-//            if (this.state.error != 'noProblemo') {
-//                return (<div><span className="errormessage">Det blev visst något fel när vi skulle hämta datan ? du kanske måste tillåta osäkra scripts?</span></div>);
-//            }
-//            else {
-//                return (
-//                    <div className="divMedAllt">
-//                        <FilterBox changeEvent={this.filterTextChange} />
-//                        <FilterList
-//                            data={this.state.lista}
-//                            filter={this.state.filterText}
-//                            delClick={this.delClick}
-//                            selectedCountryIndex={this.state.selectedCountryIndex}
-//                            liClickevent={this.liClickevent}
-//                            inputText={this.inputText}
-//                            blur={this.blur}
-//                        />
-//                        <br />
-//                        <span className="spanNrElements">antal element i listan: {this.state.lista.length}</span>
-//                        <br />
-//                    </div>
-//                );
-//            }
-
-//        }
-//    }
-
-//    componentDidMount() {
-//        this.timerID = setInterval(
-//            () => this.tick(),
-//            1000
-//        );
-//        console.log("api call körs nu ")
-//        fetch('https://forverkliga.se/JavaScript/api/simple.php?world=all')
-//            .then(function (response) {
-//                if (response.status != 200 && response.readyState != 4) {
-//                    console("problemos buddy " + response.status)
-//                    return;
-//                }
-//                return response.json()
-//                    .then(function (json) {
-//                        apiData = json;
-//                    })
-//                    .catch(function (error) {
-//                        console.log("Error with the fetch " + error);
-//                    })
-//            })
-//    }
-//    componentWillUnmount() {
-//        clearInterval(this.timerID);
-//    }
-//    tick() {
-//        if (this.state.count > 0)
-//            this.setState({
-//                count: this.state.count - 1
-//            });
-//        else {
-//            this.componentWillUnmount();
-//            if (typeof apiData !== 'undefined') {
-//                apiData.forEach(element => {
-//                    landList.push(element.name + "   Folkmängd:  " + element.population)
-//                });
-//            }
-//            else {
-//                this.setState({
-//                    error: "there is a problem"
-//                });
-//            }
-//            this.setState({
-//                lista: landList
-//            });
-//        }
-//    }
-//}
-//class FilterBox extends React.Component {
-//    render() {
-//        return (<label className="labelfilter">Filter&nbsp;&nbsp;<input className="inputfilter" onChange={this.props.changeEvent} placeholder="Sök här" /></label>);
-//    }
-//}
-//class FilterList extends React.Component {
-//    handleClick(index, x, event) {
-//        this.props.liClickevent(index);
-//    }
-//    render() {
-//        const filterLC = this.props.filter.toLowerCase();
-//        const newList = this.props.data.filter(
-//            x => x.toLowerCase().includes(filterLC)
-//        ).map(
-
-//            (x, index) =>
-//                <div key={index} onMouseLeave={this.props.blur} className="liLand">
-//                    <li
-//                        onMouseEnter={this.handleClick.bind(this, index, { x })}
-
-//                    >{x}
-//                    </li>
-//                    <button className={'btn btn-danger ' + (this.props.selectedCountryIndex === index ? '' : 'hidden')}
-//                        onClick={this.props.delClick}
-//                    >
-//                        Ta bort
-//                   </button>
-//                    <label className={(this.props.selectedCountryIndex === index ? '' : 'hidden')}> &nbsp; Eller ändra direkt i rutan åvanför &nbsp;
-//                          <input className={'inputhidden ' + (this.props.selectedCountryIndex === index ? '' : 'hidden')}
-//                            onChange={this.props.inputText} type="text" value={x}
-//                        /></label>
-//                </div>
-//            );
-
-//        return (
-//            <ul >
-//                {newList}
-//            </ul>
-//        );
-//    }
-//}
-//ReactDOM.render(
-//    <App />,
-//    document.getElementById('app')
-//);
 

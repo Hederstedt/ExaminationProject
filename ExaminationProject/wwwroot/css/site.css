@@ -73,11 +73,19 @@ textarea {
     height: 28px;
     width: 400px;
 }
-
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+.test2 {
+    background-color: #377dc8;
 }
+#temp {
+    background-color: #377dc8;
+}
+.hidden {
+    display: none;
+}
+    /* Hide/rearrange for smaller screens */
+    @media screen and (max-width: 767px) {
+        /* Hide captions */
+        .carousel-caption {
+            display: none;
+        }
+    }

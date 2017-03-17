@@ -9,7 +9,9 @@ namespace ExaminationProject.Models.ProjektModels
     {
         public Guid Id { get; set; }
         public string ProjectName { get; set; }
-        public virtual IList<ProjectContentModel> ProjectContent { get; set; }
-        public virtual IList<ProjectCommentModel> Comments { get; set; }
+
+        public ICollection<ProjectContentModel> ProjectContent { get; set; }
+        public ICollection<ProjectCommentModel> Comments { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

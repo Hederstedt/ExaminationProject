@@ -75,7 +75,7 @@ namespace ExaminationProject.Migrations
 
                     b.Property<string>("Author");
 
-                    b.Property<Guid?>("ProjectModelId");
+                    b.Property<Guid?>("ProjectId");
 
                     b.Property<string>("Text");
 
@@ -83,7 +83,7 @@ namespace ExaminationProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectModelId");
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectCommentModels");
                 });
@@ -93,11 +93,11 @@ namespace ExaminationProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ProjectModelId");
+                    b.Property<Guid?>("ProjectId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectModelId");
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectContentModels");
                 });
@@ -109,11 +109,11 @@ namespace ExaminationProject.Migrations
 
                     b.Property<string>("Header");
 
-                    b.Property<Guid?>("ProjectContentModelId");
+                    b.Property<Guid?>("ProjectContentId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectContentModelId");
+                    b.HasIndex("ProjectContentId");
 
                     b.ToTable("ProjectHeadersModels");
                 });
@@ -123,13 +123,13 @@ namespace ExaminationProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ProjectContentModelId");
+                    b.Property<Guid?>("ProjectContentId");
 
                     b.Property<byte[]>("WorkImage");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectContentModelId");
+                    b.HasIndex("ProjectContentId");
 
                     b.ToTable("ProjectImageModels");
                 });
@@ -139,13 +139,13 @@ namespace ExaminationProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ApplicationUserId");
-
                     b.Property<string>("ProjectName");
+
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ProjectModels");
                 });
@@ -155,13 +155,13 @@ namespace ExaminationProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ProjectContentModelId");
+                    b.Property<Guid?>("ProjectContentId");
 
                     b.Property<string>("Text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectContentModelId");
+                    b.HasIndex("ProjectContentId");
 
                     b.ToTable("ProjectTextModels");
                 });
@@ -275,44 +275,44 @@ namespace ExaminationProject.Migrations
 
             modelBuilder.Entity("ExaminationProject.Models.ProjectCommentModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel")
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel", "Project")
                         .WithMany("Comments")
-                        .HasForeignKey("ProjectModelId");
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectContentModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel")
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel", "Project")
                         .WithMany("ProjectContent")
-                        .HasForeignKey("ProjectModelId");
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectHeadersModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel")
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel", "ProjectContent")
                         .WithMany("Headers")
-                        .HasForeignKey("ProjectContentModelId");
+                        .HasForeignKey("ProjectContentId");
                 });
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectImageModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel")
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel", "ProjectContent")
                         .WithMany("WorkImages")
-                        .HasForeignKey("ProjectContentModelId");
+                        .HasForeignKey("ProjectContentId");
                 });
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ApplicationUser")
+                    b.HasOne("ExaminationProject.Models.ApplicationUser", "User")
                         .WithMany("Projects")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectTextModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel")
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectContentModel", "ProjectContent")
                         .WithMany("Texts")
-                        .HasForeignKey("ProjectContentModelId");
+                        .HasForeignKey("ProjectContentId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

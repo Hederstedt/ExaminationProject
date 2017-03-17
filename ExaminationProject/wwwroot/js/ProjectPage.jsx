@@ -1,4 +1,4 @@
-﻿let textLista = [{ Header: "Rubrik", Image:"/profilePic", Text: ""}];
+﻿let textLista = [{ Header: "Rubrik", file:"/profilePic", Text: ""}];
 class Project extends React.Component {
     constructor(props) {
         super(props);
@@ -12,10 +12,10 @@ class Project extends React.Component {
         this.hide = this.hide.bind(this);
         this.HandleSubmit = this.HandleSubmit.bind(this);
         this.state = {
-            error: "problems",
             workList: textLista,
             textarea: "",
             imageUrl: "/profilePic",
+            file: '',
             selectedIndex: null,
             Header: "Rubrik",
             headerText: ""
@@ -39,11 +39,12 @@ class Project extends React.Component {
         let lista = this.state.workList;
         let reader = new FileReader();
         let file = e.target.files[0];
-        reader.readAsDataURL(file)
+        reader.readAsDataURL(file);       
         reader.onloadend = () => {
             let ri = reader.result;
             lista[this.state.selectedIndex].Image = ri;
             this.setState({
+                file: file,
                 imageUrl: reader.result,
                 workList: lista,
                 selectedIndex: null
@@ -77,10 +78,32 @@ class Project extends React.Component {
     }
     HandleSubmit(e)
     {
+        const url = this.props.submitUrl;
         let data = this.state.workList;
-        let xhr = new XMLHttpRequest();
-        xhr.open('post', this.props.submitUrl, true);
-        xhr.send(data);
+        let form = new FormData();
+        data.forEach(element => {
+            form.append('Image', element.file);
+            form.append('Header', element.Header);
+            form.append('Text', element.Text);
+        })
+        console.log(data,form)
+        //$.post(url, { things: things },
+            //function () {
+            //    $('#result').html('"PassThings()" successfully called.');
+            //});
+        //console.log(data);
+        let fetchData = {
+            method: 'POST',
+            body: form,
+            headers: new Headers()
+        }
+        fetch(url, fetchData)
+            .then(function () {
+
+            });
+        //let xhr = new XMLHttpRequest();
+        //xhr.open('post', this.props.submitUrl, true);
+        //xhr.send(data);
     }
 /***************************************Det som skall renderas ut skriver du här************/
     render() {

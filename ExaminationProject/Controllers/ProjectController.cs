@@ -32,8 +32,9 @@ namespace ExaminationProject.Controllers
         ///project/data
         [Route("project/data")]
         [HttpPost]
-        public IActionResult AddProject(ProjectContentModel data)
+        public IActionResult AddProject(IEnumerable<ReactObject> data)
         {
+            var b = data;   
 
             return Content("Success :)");
         }

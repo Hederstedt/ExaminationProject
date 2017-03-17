@@ -11,6 +11,6 @@ namespace ExaminationProject.Models
     public class ApplicationUser : IdentityUser
     {
         public byte[] ProfilePic { get; set; }
-        public virtual IList<ProjectModel> Projects { get; set; }
+        public ICollection<ProjectModel> Projects { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using ExaminationProject.Models.ProjektModels;
 using System.Collections;
 using Microsoft.Extensions.ProjectModel;
+using ExaminationProject.HelperClasses;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -68,17 +69,26 @@ namespace ExaminationProject.Controllers
                 ProjectImageModel image = new ProjectImageModel()
                 {
                     Id = new Guid(),
-                    WorkImage = null,
-                   // ProjectContent = content
-                    
+                    WorkImage = await data.file.CreateImageFileAsync()
+                    // ProjectContent = content
+
                 };
 
                 ProjectContentModel content = new ProjectContentModel();
-                //content.Headers.Add(header);
-                //content.Texts.Add(text);
-                //content.WorkImages.Add(image);
-
-                ProjectModel p1 = new ProjectModel()
+                content.Headers = new List<ProjectHeadersModel>
+                {
+                    header
+                };
+                content.Texts = new List<ProjectTextModel>
+                {
+                    text
+                };
+                content.WorkImages = new List<ProjectImageModel>
+                {
+                    image
+                };
+                   
+                ProjectModel p2 = new ProjectModel()
                 {
                     User = user,
                     ProjectName = "första",
@@ -86,7 +96,7 @@ namespace ExaminationProject.Controllers
                 };
                 user.Projects = new List<ProjectModel>
                 {
-                    p1
+                    p2
                 };
                 _db.SaveChanges();
             }

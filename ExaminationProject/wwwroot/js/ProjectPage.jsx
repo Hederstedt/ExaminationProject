@@ -1,8 +1,7 @@
-﻿let textLista = [{ Header: "Rubrik", file:"/profilePic", Text: ""}];
-class Project extends React.Component {
+﻿class Project extends React.Component {
     constructor(props) {
         super(props);
-        this.changeEvent = this.changeEvent.bind(this);
+        this.HandleTextAreachangeEvent = this.HandleTextAreachangeEvent.bind(this);
         this.changeImageUrl = this.changeImageUrl.bind(this);
         this.HandleAddObject = this.HandleAddObject.bind(this);
         this.changeImageUrl = this.changeImageUrl.bind(this);
@@ -12,24 +11,32 @@ class Project extends React.Component {
         this.hide = this.hide.bind(this);
         this.HandleSubmit = this.HandleSubmit.bind(this);
         this.state = {
-            workList: textLista,
+            workList: [],
             textarea: "",
             imageUrl: "/profilePic",
             file: '',
             selectedIndex: null,
             Header: "Rubrik",
-            headerText: ""
+            headerText: "",
+            sendHeader: "",
+            listempty: true
         };
     }
- HandleAddObject(e) {
+    HandleAddObject(e) {
+        var status = this.state.listempty;
+        var obj = { file: this.state.file, text: this.state.textarea, header: this.state.sendHeader };
+        if (status != true) {
+            submit(obj);
+        }      
         let lista = this.state.workList;
         lista.push({Header: "Rubrik", Image: "/profilePic", Text:"skriv text här"});
         this.setState({
             workList: lista,
-            imageUrl: "/profilePic"
+            imageUrl: "/profilePic",
+            listempty: false
         })
     }
-    changeEvent(e) {
+    HandleTextAreachangeEvent(e) {
         this.setState({
             textarea: e.target.value
         });
@@ -62,6 +69,7 @@ class Project extends React.Component {
         lista[this.state.selectedIndex].Header = newHeader;
         this.setState({
             workList: lista,
+            sendHeader: newHeader,
             headerText: "",
             selectedIndex: null
         })
@@ -76,31 +84,45 @@ class Project extends React.Component {
             selectedIndex: null
         })
     }
+
     HandleSubmit(e)
     {
-        const url = this.props.submitUrl;
-        let data = this.state.workList;
-        let form = new FormData();
-        data.forEach(element => {
-            form.append('Image', element.file);
-            form.append('Header', element.Header);
-            form.append('Text', element.Text);
-        })
-        console.log(data,form)
+        var data = new FormData();
+        var file = this.state.file;        
+        var header = this.state.sendHeader;
+        var text = this.state.textarea;
+        data.append('header', header);
+        data.append('text', text);
+        data.append('file', file);
+        var xhr = new XMLHttpRequest();
+        xhr.open('post', "/project/data", true);
+       
+        xhr.send(data);
+
+
+        //const url = this.props.submitUrl;
+        //let data = this.state.workList;
+        //let form = new FormData();
+        //data.forEach(element => {
+        //    form.append('Image', element.file);
+        //    form.append('Header', element.Header);
+        //    form.append('Text', element.Text);
+        //})
+        //console.log(data,form)
         //$.post(url, { things: things },
             //function () {
             //    $('#result').html('"PassThings()" successfully called.');
             //});
         //console.log(data);
-        let fetchData = {
-            method: 'POST',
-            body: form,
-            headers: new Headers()
-        }
-        fetch(url, fetchData)
-            .then(function () {
+        //let fetchData = {
+        //    method: 'POST',
+        //    body: form,
+        //    headers: new Headers()
+        //}
+        //fetch(url, fetchData)
+        //    .then(function () {
 
-            });
+        //    });
         //let xhr = new XMLHttpRequest();
         //xhr.open('post', this.props.submitUrl, true);
         //xhr.send(data);
@@ -120,6 +142,8 @@ class Project extends React.Component {
                         visable={this.state.visableInput}
                         hide={this.hide}
                         headertextEvent={this.HandleheadertextEvent}
+                        areaTextchangeEvent={this.HandleTextAreachangeEvent}
+                        textarea={this.state.textarea}
                     />
                     <br />
                     <br />
@@ -129,7 +153,19 @@ class Project extends React.Component {
         }
     }
 /****************************************Slut på project classen **************************/
+function submit(obj) {
+    var data = new FormData();
 
+    var file = obj.file;
+    var header = obj.header;
+    var text = obj.text;
+    data.append('header', header);
+    data.append('text', text);
+    data.append('file', file);
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', "/project/data", true);
+    xhr.send(data);
+}
 class ButtonBox extends React.Component {
     render() {
         return (
@@ -140,11 +176,6 @@ class ButtonBox extends React.Component {
 
             </div>
         );
-    }
-}
-class TextBox extends React.Component {
-    render() {
-        return (<textarea className="col-md-10 center" onChange={this.props.changeEvent} value={this.props.textarea}></textarea>);
     }
 }
 class ListBox extends React.Component {
@@ -173,7 +204,7 @@ class ListBox extends React.Component {
                 <img src={x.Image} />
               
                 <br />
-                <textarea className="col-md-10 center " onChange={this.props.changeEvent} value={this.props.textarea}></textarea>
+                <textarea className="col-md-10 " onChange={this.props.areaTextchangeEvent} value={this.props.textarea}></textarea>
                 <br />
             <br/>
             </div>

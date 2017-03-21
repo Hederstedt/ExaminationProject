@@ -8,8 +8,9 @@ namespace ExaminationProject.Models
 {
     public class ReactObject
     {
+        public Guid Id { get; set; }
         public string Header { get; set; }
-        public IFormFile Image { get; set; }
         public string Text { get; set; }
+        public IFormFile file { get; set; }
     }
 }

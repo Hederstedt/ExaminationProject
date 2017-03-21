@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ExaminationProject.Migrations
 {
-    public partial class Initial : Migration
+    public partial class test2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -67,7 +67,8 @@ namespace ExaminationProject.Migrations
                 name: "ProjectModels",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ProjectName = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: true)
                 },
@@ -174,7 +175,7 @@ namespace ExaminationProject.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Author = table.Column<string>(nullable: true),
-                    ProjectId = table.Column<Guid>(nullable: true),
+                    ProjectId = table.Column<int>(nullable: true),
                     Text = table.Column<string>(nullable: true),
                     TimeStamp = table.Column<DateTime>(nullable: false)
                 },
@@ -193,18 +194,19 @@ namespace ExaminationProject.Migrations
                 name: "ProjectContentModels",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    ProjectId = table.Column<Guid>(nullable: true)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ProjectModelId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProjectContentModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectContentModels_ProjectModels_ProjectId",
-                        column: x => x.ProjectId,
+                        name: "FK_ProjectContentModels_ProjectModels_ProjectModelId",
+                        column: x => x.ProjectModelId,
                         principalTable: "ProjectModels",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,7 +215,7 @@ namespace ExaminationProject.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Header = table.Column<string>(nullable: true),
-                    ProjectContentId = table.Column<Guid>(nullable: true)
+                    ProjectContentId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -231,7 +233,7 @@ namespace ExaminationProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    ProjectContentId = table.Column<Guid>(nullable: true),
+                    ProjectContentId = table.Column<int>(nullable: true),
                     WorkImage = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
@@ -250,7 +252,7 @@ namespace ExaminationProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    ProjectContentId = table.Column<Guid>(nullable: true),
+                    ProjectContentId = table.Column<int>(nullable: true),
                     Text = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -281,9 +283,10 @@ namespace ExaminationProject.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectContentModels_ProjectId",
+                name: "IX_ProjectContentModels_ProjectModelId",
                 table: "ProjectContentModels",
-                column: "ProjectId");
+                column: "ProjectModelId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectHeadersModels_ProjectContentId",

@@ -37,29 +37,25 @@ namespace ExaminationProject.Controllers
         }
         [Route("project/test")]
         [HttpPost]
-        public IActionResult AddProjectArray(IEnumerable<ReactObject> objects)
+        public async Task<IActionResult> AddProjectArrayAsync(ReactObject data)
         {
-            foreach (var item in objects)
-            {
-                var b = item;
-            }
-            return Content("Success :)");
-        }
-        ///project/data
-        [Route("project/data")]
-        [HttpPost]
-        public async Task<IActionResult> AddProjectAsync(ReactObject data)
-        {
-
-            CreateObj(data);
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                ProjectHeadersModel newHeader = CreateHeader(data.Header, _db);
-                ProjectTextModel newText = CreateText(data.Text, _db);
-                ProjectImageModel newImag = await CreateImageAsync(data.File, _db);
-
-                ProjectContentModel newContent = CreateContent(newHeader, newText, newImag, _db);
+                List<ReactObject> lista = TempObject.GetTempData();
+                List<ProjectHeadersModel> headerList = new List<ProjectHeadersModel>();
+                List<ProjectTextModel> textList = new List<ProjectTextModel>();
+                List<ProjectImageModel> imageList = new List<ProjectImageModel>();
+                foreach (var item in lista)
+                {
+                    ProjectHeadersModel newHeader = CreateHeader(item.Header, _db);
+                    ProjectTextModel newText = CreateText(item.Text, _db);
+                    //ProjectImageModel newImag = await CreateImageAsync(item.File, _db);
+                    headerList.Add(newHeader);
+                    textList.Add(newText);
+                    //imageList.Add(newImag);
+                }
+                ProjectContentModel newContent = CreateContent(headerList, textList, imageList, _db);
                 ProjectModel newProject = new ProjectModel()
                 {
                     User = user,
@@ -73,18 +69,27 @@ namespace ExaminationProject.Controllers
             return Content("Success :)");
         }
 
-        private ProjectContentModel CreateContent(ProjectHeadersModel newHeader, ProjectTextModel newText, ProjectImageModel newImag, ApplicationDbContext db)
+
+
+        ///project/data
+        [Route("project/data")]
+        [HttpPost]
+        public  IActionResult AddTempData(ReactObject data)
+        {
+            TempObject.AddToTemp(data);
+            return Content("Success :)");
+        }
+        private ProjectContentModel CreateContent(List<ProjectHeadersModel> headerList, List<ProjectTextModel> textList, List<ProjectImageModel> imageList, ApplicationDbContext db)
         {
             ProjectContentModel tempContent = new ProjectContentModel()
             {
-                Headers = new List<ProjectHeadersModel> { newHeader },
-                Texts = new List<ProjectTextModel> {newText },
-                WorkImages = new List<ProjectImageModel> {newImag },                      
+                Headers = headerList,
+                Texts = textList,
+                WorkImages = imageList
             };
             db.ProjectContentModels.Add(tempContent);
             return tempContent;
         }
-
         private async Task<ProjectImageModel> CreateImageAsync(IFormFile file, ApplicationDbContext db)
         {
             ProjectImageModel tempImage = new ProjectImageModel()
@@ -122,18 +127,7 @@ namespace ExaminationProject.Controllers
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }
-        private void CreateObj(ReactObject fromReact)
-        {
-            List<ReactObject> tmpLista = new List<ReactObject>();
 
-            ReactObject newObj = new ReactObject();
-            newObj.Id = Idd++;
-            newObj.Header = fromReact.Header;
-            newObj.File = fromReact.File;
-            newObj.Text = fromReact.Text;
-            tmpLista.Add(newObj);
-
-        }
     }
 
 }

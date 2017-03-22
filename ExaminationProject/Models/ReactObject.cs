@@ -15,4 +15,22 @@ namespace ExaminationProject.Models
         public string Text { get; set; }
         public IFormFile File { get; set; }
     }
+    public static class TempObject
+    {
+        private static List<ReactObject> tempData;
+
+        static TempObject()
+        {
+            tempData = new List<ReactObject>();
+        }
+        public static void AddToTemp(ReactObject r)
+        {
+            tempData.Add(r);
+        }
+        public static List<ReactObject> GetTempData()
+        {
+            return tempData;
+        }
+    }
+    
 }

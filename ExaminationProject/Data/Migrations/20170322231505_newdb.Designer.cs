@@ -8,8 +8,8 @@ using ExaminationProject.Data;
 namespace ExaminationProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170321125418_test2")]
-    partial class test2
+    [Migration("20170322231505_newdb")]
+    partial class newdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

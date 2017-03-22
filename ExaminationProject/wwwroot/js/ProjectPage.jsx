@@ -64,7 +64,7 @@
             imageUrl: "/profilePic",
             listempty: false
         })
-  
+
     }
     HandleTextAreachangeEvent(e) {
         this.setState({
@@ -124,17 +124,17 @@
         this.setState({
             title: newtitle
         })
-}
+    }
     HandleSubmit(e) {
         console.log("HandleSubmit");
-        var objects = this.state.arraySend;
-        console.log(objects);
-
-        $.post('/project/test', { objects: objects },
-            function () {
-                $('#result').html('"PassThings()" successfully called.');
-            });
-     
+        var title = this.state.title;
+        var data = new FormData();
+        data.append('title', title);
+        console.log(data);
+        var xhr = new XMLHttpRequest();
+        xhr.open('post', "/project/test", true);
+        xhr.send(data);
+       
     }
     /***************************************Det som skall renderas ut skriver du här************/
     render() {
@@ -165,7 +165,7 @@
 }
 /****************************************Slut på project classen **************************/
 
-function submit(obj) {   
+function submit(obj) {
     var data = new FormData();
     var title = obj.title;
     var file = obj.file;

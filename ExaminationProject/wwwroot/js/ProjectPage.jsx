@@ -1,4 +1,4 @@
-﻿let textLista = [{ Header: "Rubrik", file:"/profilePic", Text: ""}];
+﻿let textLista = [{ Header: "Rubrik", file: "/profilePic", Text: "" }];
 class Project extends React.Component {
     constructor(props) {
         super(props);
@@ -18,12 +18,14 @@ class Project extends React.Component {
             file: '',
             selectedIndex: null,
             Header: "Rubrik",
-            headerText: ""
+            headerText: "",
+            tempHeader: "",
+            temptext:""
         };
     }
- HandleAddObject(e) {
+    HandleAddObject(e) {
         let lista = this.state.workList;
-        lista.push({Header: "Rubrik", Image: "/profilePic", Text:"skriv text här"});
+        lista.push({ Header: "Rubrik", Image: "/profilePic", Text: "skriv text här" });
         this.setState({
             workList: lista,
             imageUrl: "/profilePic"
@@ -39,7 +41,7 @@ class Project extends React.Component {
         let lista = this.state.workList;
         let reader = new FileReader();
         let file = e.target.files[0];
-        reader.readAsDataURL(file);       
+        reader.readAsDataURL(file);
         reader.onloadend = () => {
             let ri = reader.result;
             lista[this.state.selectedIndex].Image = ri;
@@ -62,6 +64,7 @@ class Project extends React.Component {
         lista[this.state.selectedIndex].Header = newHeader;
         this.setState({
             workList: lista,
+            tempHeader: newHeader,
             headerText: "",
             selectedIndex: null
         })
@@ -76,58 +79,61 @@ class Project extends React.Component {
             selectedIndex: null
         })
     }
-    HandleSubmit(e)
-    {
-        const url = this.props.submitUrl;
-        let data = this.state.workList;
-        let form = new FormData();
-        data.forEach(element => {
-            form.append('Image', element.file);
-            form.append('Header', element.Header);
-            form.append('Text', element.Text);
-        })
-        console.log(data,form)
-        //$.post(url, { things: things },
-            //function () {
-            //    $('#result').html('"PassThings()" successfully called.');
-            //});
-        //console.log(data);
-        let fetchData = {
-            method: 'POST',
-            body: form,
-            headers: new Headers()
-        }
-        fetch(url, fetchData)
-            .then(function () {
+    HandleSubmit(e) {
+        const url = "/project/data";
+       // let data = this.state.workList;
+       // let file = this.state.file;
+       // let header = this.state.tempHeader;
+        let text = "funkar detta?";
+        var data = new FormData();       
+       // form.append('Image', file);
+        //  form.append('Header', header);
+        data.append('Text', text);
+        var formData = new FormData();
 
-            });
+        formData.append("username", "Groucho");
+        console.log(formData)
+        $.post(url, { data: data },
+        function () {
+            $('#result').html('"PassThings()" successfully called.');
+        });
+        //console.log(data);
+        //let fetchData = {
+        //    method: "POST",
+        //    body: data,
+        //    headers: new Headers({ 'Content-Type': 'text/plain' })
+        //}
+        //fetch(url, fetchData)
+        //    .then(function () {
+
+        //    });
         //let xhr = new XMLHttpRequest();
         //xhr.open('post', this.props.submitUrl, true);
         //xhr.send(data);
     }
-/***************************************Det som skall renderas ut skriver du här************/
+    /***************************************Det som skall renderas ut skriver du här************/
     render() {
         return (
-            <div className="" style={{ backgroundColor: "#377dc8"}}>
-                    <ListBox data={this.state.workList}
-                        previewImage={this.changeImageUrl}
-                        isImage={this.state.isImage}
-                        liClickevent={this.liClickevent}
-                        header={this.state.Header}
-                        selectedIndex={this.state.selectedIndex}
-                        changeHeader={this.Handleheader}
-                        headerText={this.state.headerText}
-                        visable={this.state.visableInput}
-                        hide={this.hide}
-                        headertextEvent={this.HandleheadertextEvent}
-                    />
-                    <br />
-                    <br />
-                    <br />
-                    <ButtonBox addObject={this.HandleAddObject} submit={this.HandleSubmit}/>
-                </div>);
-        }
+            <div className="" style={{ backgroundColor: "#377dc8" }}>
+                <ListBox data={this.state.workList}
+                    previewImage={this.changeImageUrl}
+                    isImage={this.state.isImage}
+                    liClickevent={this.liClickevent}
+                    header={this.state.Header}
+                    selectedIndex={this.state.selectedIndex}
+                    changeHeader={this.Handleheader}
+                    headerText={this.state.headerText}
+                    visable={this.state.visableInput}
+                    hide={this.hide}
+                    headertextEvent={this.HandleheadertextEvent}
+                />
+                <br />
+                <br />
+                <br />
+                <ButtonBox addObject={this.HandleAddObject} submit={this.HandleSubmit} />
+            </div>);
     }
+}
 /****************************************Slut på project classen **************************/
 
 class ButtonBox extends React.Component {
@@ -135,7 +141,7 @@ class ButtonBox extends React.Component {
         return (
             <div className="col-md-12">
                 <button className="btn btn-primary btn-lg col-md-4" onClick={this.props.addObject}><i className="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Lägg till ett steg</button>
-                
+
                 <button className="btn btn-success btn-lg col-md-4" onClick={this.props.submit}><i className="fa fa-cloud" aria-hidden="true"></i>&nbsp;Spara</button>
 
             </div>
@@ -160,7 +166,7 @@ class ListBox extends React.Component {
                     <li ><h3>{x.Header}</h3></li>
                 </div>
                 <div className="col-md-6">
-                    <input className={this.props.selectedIndex === index ? '' : 'hidden'} type="text" value={this.props.headerText} onChange={this.props.headertextEvent}/>
+                    <input className={this.props.selectedIndex === index ? '' : 'hidden'} type="text" value={this.props.headerText} onChange={this.props.headertextEvent} />
                     <button className="btn btn-info btn-lg" onClick={this.props.changeHeader}>Ändra Rubrik</button>
                     <br />
                     <label className="btn btn-info btn-lg inputremove">
@@ -169,17 +175,17 @@ class ListBox extends React.Component {
                             onChange={this.props.previewImage} /></label>
                 </div>
             </div>
-                       
-                <img src={x.Image} />
-              
-                <br />
-                <textarea className="col-md-10 center " onChange={this.props.changeEvent} value={this.props.textarea}></textarea>
-                <br />
-            <br/>
-            </div>
-            );
-            return (<ol>{newLista}</ol>);
- 
+
+            <img src={x.Image} />
+
+            <br />
+            <textarea className="col-md-10 center " onChange={this.props.changeEvent} value={this.props.textarea}></textarea>
+            <br />
+            <br />
+        </div>
+        );
+        return (<ol>{newLista}</ol>);
+
 
     }
 }

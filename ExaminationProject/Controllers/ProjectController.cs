@@ -32,7 +32,7 @@ namespace ExaminationProject.Controllers
         ///project/data
         [Route("project/data")]
         [HttpPost]
-        public IActionResult AddProject(IEnumerable<ReactObject> data)
+        public IActionResult AddProject(ReactObject data)
         {
             var b = data;   
 

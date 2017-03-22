@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,16 @@ namespace ExaminationProject.HelperClasses
             {
                 BinaryReader br = new BinaryReader(fs);
                 imageData = br.ReadBytes((int)imageLength);
+            };
+            return imageData;
+        }
+        public static async Task<byte[]> CreateImageFileAsync(this IFormFile file)
+        {
+            byte[] imageData = null;
+            using (var memorystream = new MemoryStream())
+            {
+                await file.CopyToAsync(memorystream);
+                imageData = memorystream.ToArray();
             };
             return imageData;
         }

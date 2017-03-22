@@ -7,10 +7,10 @@ namespace ExaminationProject.Models.ProjektModels
 {
     public class ProjectModel
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string ProjectName { get; set; }
 
-        public ICollection<ProjectContentModel> ProjectContent { get; set; }
+        public ProjectContentModel ProjectContent { get; set; }
         public ICollection<ProjectCommentModel> Comments { get; set; }
         public ApplicationUser User { get; set; }
     }

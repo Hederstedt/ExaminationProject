@@ -75,7 +75,7 @@ namespace ExaminationProject.Migrations
 
                     b.Property<string>("Author");
 
-                    b.Property<Guid?>("ProjectId");
+                    b.Property<int?>("ProjectId");
 
                     b.Property<string>("Text");
 
@@ -90,14 +90,15 @@ namespace ExaminationProject.Migrations
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectContentModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ProjectId");
+                    b.Property<int>("ProjectModelId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectModelId")
+                        .IsUnique();
 
                     b.ToTable("ProjectContentModels");
                 });
@@ -109,7 +110,7 @@ namespace ExaminationProject.Migrations
 
                     b.Property<string>("Header");
 
-                    b.Property<Guid?>("ProjectContentId");
+                    b.Property<int?>("ProjectContentId");
 
                     b.HasKey("Id");
 
@@ -123,7 +124,7 @@ namespace ExaminationProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ProjectContentId");
+                    b.Property<int?>("ProjectContentId");
 
                     b.Property<byte[]>("WorkImage");
 
@@ -136,7 +137,7 @@ namespace ExaminationProject.Migrations
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("ProjectName");
@@ -155,7 +156,7 @@ namespace ExaminationProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ProjectContentId");
+                    b.Property<int?>("ProjectContentId");
 
                     b.Property<string>("Text");
 
@@ -282,9 +283,10 @@ namespace ExaminationProject.Migrations
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectContentModel", b =>
                 {
-                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel", "Project")
-                        .WithMany("ProjectContent")
-                        .HasForeignKey("ProjectId");
+                    b.HasOne("ExaminationProject.Models.ProjektModels.ProjectModel", "ProjectModel")
+                        .WithOne("ProjectContent")
+                        .HasForeignKey("ExaminationProject.Models.ProjektModels.ProjectContentModel", "ProjectModelId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ExaminationProject.Models.ProjektModels.ProjectHeadersModel", b =>

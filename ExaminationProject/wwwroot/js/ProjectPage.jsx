@@ -1,8 +1,7 @@
-﻿let textLista = [{ Header: "Rubrik", file: "/profilePic", Text: "" }];
-class Project extends React.Component {
+﻿class Project extends React.Component {
     constructor(props) {
         super(props);
-        this.changeEvent = this.changeEvent.bind(this);
+        this.HandleTextAreachangeEvent = this.HandleTextAreachangeEvent.bind(this);
         this.changeImageUrl = this.changeImageUrl.bind(this);
         this.HandleAddObject = this.HandleAddObject.bind(this);
         this.changeImageUrl = this.changeImageUrl.bind(this);
@@ -11,27 +10,63 @@ class Project extends React.Component {
         this.HandleheadertextEvent = this.HandleheadertextEvent.bind(this);
         this.hide = this.hide.bind(this);
         this.HandleSubmit = this.HandleSubmit.bind(this);
+        this.HandleTitleEvente = this.HandleTitleEvente.bind(this);
+        this.HandleTitleChange = this.HandleTitleChange.bind(this);
         this.state = {
-            workList: textLista,
+            workList: [],
             textarea: "",
             imageUrl: "/profilePic",
             file: '',
             selectedIndex: null,
             Header: "Rubrik",
             headerText: "",
-            tempHeader: "",
-            temptext:""
+            sendHeader: "",
+            listempty: true,
+            count: 0,
+            title: "ge ditt projekt ett namn",
+            titletext: "",
+            arraySend: []
         };
+
     }
     HandleAddObject(e) {
+        var status = this.state.listempty;
+        var counte = this.state.count;
+        var obj = { count: this.state.count, title: this.state.title, file: this.state.file, text: this.state.textarea, header: this.state.sendHeader };
+        if (status != true) {
+            submit(obj);
+            counte++;
+            var data = new FormData();
+            var title = obj.title;
+            var file = obj.file;
+            var header = obj.header;
+            var text = obj.text;
+            var count = obj.count;
+            console.log(count);
+            data.append('count', count)
+            data.append('header', header);
+            data.append('title', title);
+            data.append('text', text);
+            data.append('file', file);
+            console.log(data);
+            var arayli = this.state.arraySend;
+            arayli.push(data);
+            console.log(arayli);
+            this.setState({
+                arraySend: arayli,
+                count: counte
+            })
+        }
         let lista = this.state.workList;
         lista.push({ Header: "Rubrik", Image: "/profilePic", Text: "skriv text här" });
         this.setState({
             workList: lista,
-            imageUrl: "/profilePic"
+            imageUrl: "/profilePic",
+            listempty: false
         })
+  
     }
-    changeEvent(e) {
+    HandleTextAreachangeEvent(e) {
         this.setState({
             textarea: e.target.value
         });
@@ -64,7 +99,7 @@ class Project extends React.Component {
         lista[this.state.selectedIndex].Header = newHeader;
         this.setState({
             workList: lista,
-            tempHeader: newHeader,
+            sendHeader: newHeader,
             headerText: "",
             selectedIndex: null
         })
@@ -79,42 +114,34 @@ class Project extends React.Component {
             selectedIndex: null
         })
     }
+    HandleTitleEvente(e) {
+        this.setState({
+            titletext: e.target.value
+        })
+    }
+    HandleTitleChange(e) {
+        let newtitle = this.state.titletext;
+        this.setState({
+            title: newtitle
+        })
+}
     HandleSubmit(e) {
-        const url = "/project/data";
-       // let data = this.state.workList;
-       // let file = this.state.file;
-       // let header = this.state.tempHeader;
-        let text = "funkar detta?";
-        var data = new FormData();       
-       // form.append('Image', file);
-        //  form.append('Header', header);
-        data.append('Text', text);
-        var formData = new FormData();
+        console.log("HandleSubmit");
+        var objects = this.state.arraySend;
+        console.log(objects);
 
-        formData.append("username", "Groucho");
-        console.log(formData)
-        $.post(url, { data: data },
-        function () {
-            $('#result').html('"PassThings()" successfully called.');
-        });
-        //console.log(data);
-        //let fetchData = {
-        //    method: "POST",
-        //    body: data,
-        //    headers: new Headers({ 'Content-Type': 'text/plain' })
-        //}
-        //fetch(url, fetchData)
-        //    .then(function () {
-
-        //    });
-        //let xhr = new XMLHttpRequest();
-        //xhr.open('post', this.props.submitUrl, true);
-        //xhr.send(data);
+        $.post('/project/test', { objects: objects },
+            function () {
+                $('#result').html('"PassThings()" successfully called.');
+            });
+     
     }
     /***************************************Det som skall renderas ut skriver du här************/
     render() {
         return (
+
             <div className="" style={{ backgroundColor: "#377dc8" }}>
+                <TitleBox titleHeader={this.state.title} inputTitle={this.state.titletext} inputTitleEvent={this.HandleTitleEvente} changeTitle={this.HandleTitleChange} />
                 <ListBox data={this.state.workList}
                     previewImage={this.changeImageUrl}
                     isImage={this.state.isImage}
@@ -126,6 +153,8 @@ class Project extends React.Component {
                     visable={this.state.visableInput}
                     hide={this.hide}
                     headertextEvent={this.HandleheadertextEvent}
+                    areaTextchangeEvent={this.HandleTextAreachangeEvent}
+                    textarea={this.state.textarea}
                 />
                 <br />
                 <br />
@@ -136,6 +165,36 @@ class Project extends React.Component {
 }
 /****************************************Slut på project classen **************************/
 
+function submit(obj) {   
+    var data = new FormData();
+    var title = obj.title;
+    var file = obj.file;
+    var header = obj.header;
+    var text = obj.text;
+    var count = obj.count;
+    console.log(count);
+    data.append('count', count)
+    data.append('title', title)
+    data.append('header', header);
+    data.append('text', text);
+    data.append('file', file);
+    console.log(data);
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', "/project/data", true);
+    xhr.send(data);
+}
+class TitleBox extends React.Component {
+    render() {
+        return (
+            <div>
+                <h1>{this.props.titleHeader}</h1>
+                <input type="text" value={this.props.inputTitle} onChange={this.props.inputTitleEvent} />
+
+                <button className="btn btn-info btn-lg col-md-4" onClick={this.props.changeTitle}>Ändra titel</button>
+            </div>
+        );
+    }
+}
 class ButtonBox extends React.Component {
     render() {
         return (
@@ -146,11 +205,6 @@ class ButtonBox extends React.Component {
 
             </div>
         );
-    }
-}
-class TextBox extends React.Component {
-    render() {
-        return (<textarea className="col-md-10 center" onChange={this.props.changeEvent} value={this.props.textarea}></textarea>);
     }
 }
 class ListBox extends React.Component {
@@ -179,7 +233,7 @@ class ListBox extends React.Component {
             <img src={x.Image} />
 
             <br />
-            <textarea className="col-md-10 center " onChange={this.props.changeEvent} value={this.props.textarea}></textarea>
+            <textarea className="col-md-10 " onChange={this.props.areaTextchangeEvent} value={this.props.textarea}>{x.Text}</textarea>
             <br />
             <br />
         </div>
@@ -197,3 +251,29 @@ ReactDOM.render(<Project submitUrl="/project/data" />, document.getElementById('
 
 /***************************temp**************************************/
 
+ //const url = this.props.submitUrl;
+        //let data = this.state.workList;
+        //let form = new FormData();
+        //data.forEach(element => {
+        //    form.append('Image', element.file);
+        //    form.append('Header', element.Header);
+        //    form.append('Text', element.Text);
+        //})
+        //console.log(data,form)
+        //$.post(url, { things: things },
+        //function () {
+        //    $('#result').html('"PassThings()" successfully called.');
+        //});
+        //console.log(data);
+        //let fetchData = {
+        //    method: 'POST',
+        //    body: form,
+        //    headers: new Headers()
+        //}
+        //fetch(url, fetchData)
+        //    .then(function () {
+
+        //    });
+        //let xhr = new XMLHttpRequest();
+        //xhr.open('post', this.props.submitUrl, true);
+        //xhr.send(data);

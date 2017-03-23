@@ -8,11 +8,11 @@ namespace ExaminationProject.Models
 {
     public class ProjectCommentModel
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Author { get; set; }
         public string Text { get; set; }
         public DateTime TimeStamp { get; set; }
 
-        public ProjectModel Project { get; set; }
+        public virtual ProjectModel Project { get; set; }
     }
 }

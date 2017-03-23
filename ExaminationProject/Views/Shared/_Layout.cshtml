@@ -36,13 +36,14 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Comment" asp-action="Index">Comment</a></li>
                     <li><a asp-area="" asp-controller="Project" asp-action="Index">Projects</a></li>
-                    <li><a asp-area="" asp-controller="ProjectModels" asp-action="Index">ProjectsModels</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
     </nav>
-    @await Html.PartialAsync("_LoginUserPic")
+    <div>
+        @await Html.PartialAsync("_LoginUserPic")
+    </div>
     <div class="container body-content">
         @RenderBody()
         <hr />
@@ -58,8 +59,6 @@
         <script src="~/lib/react/react-dom.js"></script>
         <script src="~/lib/remarkable/dist/remarkable.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-        @*<script src="@Url.Content("~/js/comment.jsx")"></script>*@
-        @*<script src="@Url.Content("~/js/ProjectPage.jsx")"></script>*@
     </environment>
     <environment names="Staging,Production">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"

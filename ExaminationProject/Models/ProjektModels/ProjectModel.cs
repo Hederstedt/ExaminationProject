@@ -12,6 +12,6 @@ namespace ExaminationProject.Models.ProjektModels
 
         public ProjectContentModel ProjectContent { get; set; }
         public ICollection<ProjectCommentModel> Comments { get; set; }
-        public ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

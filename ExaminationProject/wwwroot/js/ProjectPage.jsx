@@ -13,7 +13,7 @@
         this.HandleTitleEvente = this.HandleTitleEvente.bind(this);
         this.HandleTitleChange = this.HandleTitleChange.bind(this);
         this.state = {
-            workList: [],
+            workList: [{ Header: "Rubrik", Image: "/profilePic", Text: "skriv text här" }],
             textarea: "",
             imageUrl: "/profilePic",
             file: '',
@@ -139,7 +139,6 @@
     /***************************************Det som skall renderas ut skriver du här************/
     render() {
         return (
-
             <div className="" style={{ backgroundColor: "#377dc8" }}>
                 <TitleBox titleHeader={this.state.title} inputTitle={this.state.titletext} inputTitleEvent={this.HandleTitleEvente} changeTitle={this.HandleTitleChange} />
                 <ListBox data={this.state.workList}
@@ -189,7 +188,6 @@ class TitleBox extends React.Component {
             <div>
                 <h1>{this.props.titleHeader}</h1>
                 <input type="text" value={this.props.inputTitle} onChange={this.props.inputTitleEvent} />
-
                 <button className="btn btn-info btn-lg col-md-4" onClick={this.props.changeTitle}>Ändra titel</button>
             </div>
         );
@@ -200,9 +198,7 @@ class ButtonBox extends React.Component {
         return (
             <div className="col-md-12">
                 <button className="btn btn-primary btn-lg col-md-4" onClick={this.props.addObject}><i className="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Lägg till ett steg</button>
-
                 <button className="btn btn-success btn-lg col-md-4" onClick={this.props.submit}><i className="fa fa-cloud" aria-hidden="true"></i>&nbsp;Spara</button>
-
             </div>
         );
     }

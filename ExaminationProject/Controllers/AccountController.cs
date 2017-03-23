@@ -119,11 +119,7 @@ namespace ExaminationProject.Controllers
                 var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 if (model.AvatarImage != null)
                 {
-                    using (var memorystream = new MemoryStream())
-                    {
-                        await model.AvatarImage.CopyToAsync(memorystream);
-                        user.ProfilePic = memorystream.ToArray();
-                    }
+                    user.ProfilePic = await model.AvatarImage.CreateImageFileAsync();                    
                 }
                
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -275,11 +271,7 @@ namespace ExaminationProject.Controllers
                 }
                 else if (model.AvatarImage != null)
                 {
-                    using (var memorystream = new MemoryStream())
-                    {
-                        await model.AvatarImage.CopyToAsync(memorystream);
-                        user.ProfilePic = memorystream.ToArray();
-                    }
+                    user.ProfilePic = await model.AvatarImage.CreateImageFileAsync();                   
                 }
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)

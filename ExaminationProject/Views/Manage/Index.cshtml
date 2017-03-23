@@ -9,23 +9,58 @@
 <div>
     <h4>Ändra dina konto inställningar</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>Lösenord:</dt>
-        <dd>
-            @if (Model.HasPassword)
-            {
-                <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">byt lösenord</a>
-            }
-            else
-            {
-                <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Skapa ett lösenord</a>
-            }
-        </dd>
-        <dt>Externa Loggins:</dt>
-        <dd>
+    <form asp-controller="Manage" asp-action="Index" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" enctype="multipart/form-data">
+        <h4>Skapa ett nytt konto.</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4 tempback">
+                <div class="form-group">
 
-            @Model.Logins.Count <a asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
-        </dd>
+                    <label asp-for="AvatarImage" class="col-md-2  col-md-offset-2 control-label"><img id="ManagePageImage" src="@Url.Action("ProfilePic", "Home")" class="profilePicRoundMedium" /></label>
+                    <div class="inputremove">
+                        <input asp-for="AvatarImage" class="profilePic" type="file" typeof="file" accept=".png, .jpg, .jpeg, .gif, .tif" alt="Lägg till en bild"
+                               onchange="document.getElementById('ManagePageImage').src = window.URL.createObjectURL(this.files[0])" />
+                    </div>
 
-    </dl>
+                </div>
+                <span class="col-md-12 col-md-offset-2">Klicka på bilden för att ändra</span>
+            </div>
+            <div class="col-md-8">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="OldPassword" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="OldPassword" class="form-control" />
+                        <span asp-validation-for="OldPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewPassword" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="NewPassword" class="form-control" />
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-success">Uppdatera</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>

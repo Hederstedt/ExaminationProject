@@ -7,10 +7,9 @@ using ExaminationProject.Models.ProjektModels;
 
 namespace ExaminationProject.Models
 {
-    // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
         public byte[] ProfilePic { get; set; }
-        public ICollection<ProjectModel> Projects { get; set; }
+        public virtual ICollection<ProjectModel> Projects { get; set; }
     }
 }

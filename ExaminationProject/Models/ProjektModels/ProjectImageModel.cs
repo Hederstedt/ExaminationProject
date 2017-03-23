@@ -9,6 +9,6 @@ namespace ExaminationProject.Models.ProjektModels
     {
         public Guid Id { get; set; }
         public byte[] WorkImage { get; set; }
-        public ProjectContentModel ProjectContent { get; set; }
+        public virtual ProjectContentModel ProjectContent { get; set; }
     }
 }

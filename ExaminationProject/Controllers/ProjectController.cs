@@ -20,8 +20,6 @@ namespace ExaminationProject.Controllers
     {
         private ApplicationDbContext _db;
         private UserManager<ApplicationUser> _userManager;
-        public bool first = true;
-        public int Idd;
 
         public ProjectController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
@@ -29,12 +27,20 @@ namespace ExaminationProject.Controllers
             _userManager = userManager;
 
         }
-
         // GET: /<controller>/
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            var projects = user.Projects;
+            return View(projects.OrderBy(x => x.ProjectName).ToList());
+        }
+        // GET: /<controller>/
+        public IActionResult CreateProject()
         {
             return View();
         }
+
+
         [Route("project/test")]
         [HttpPost]
         public async Task<IActionResult> AddProjectArrayAsync(ReactObject data)
@@ -42,19 +48,10 @@ namespace ExaminationProject.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                List<ReactObject> lista = TempObject.GetTempData();
-                List<ProjectHeadersModel> headerList = new List<ProjectHeadersModel>();
-                List<ProjectTextModel> textList = new List<ProjectTextModel>();
-                List<ProjectImageModel> imageList = new List<ProjectImageModel>();
-                foreach (var item in lista)
-                {
-                    ProjectHeadersModel newHeader = CreateHeader(item.Header, _db);
-                    ProjectTextModel newText = CreateText(item.Text, _db);
-                    //ProjectImageModel newImag = await CreateImageAsync(item.File, _db);
-                    headerList.Add(newHeader);
-                    textList.Add(newText);
-                    //imageList.Add(newImag);
-                }
+                //List<ReactObject> lista = TempObject.GetTempData();
+                List<ProjectHeadersModel> headerList = TempObject.GetTempHeader();
+                List<ProjectTextModel> textList = TempObject.GetTempText();
+                List<ProjectImageModel> imageList = TempObject.GetTempImage();
                 ProjectContentModel newContent = CreateContent(headerList, textList, imageList, _db);
                 ProjectModel newProject = new ProjectModel()
                 {
@@ -69,14 +66,17 @@ namespace ExaminationProject.Controllers
             return Content("Success :)");
         }
 
-
-
         ///project/data
         [Route("project/data")]
         [HttpPost]
-        public  IActionResult AddTempData(ReactObject data)
+        public async Task<IActionResult> AddTempDataAsync(ReactObject data)
         {
-            TempObject.AddToTemp(data);
+            ProjectHeadersModel newHeader = CreateHeader(data.Header, _db);
+            ProjectTextModel newText = CreateText(data.Text, _db);
+            ProjectImageModel newImag = await CreateImageAsync(data.File, _db);
+            TempObject.AddToTempImage(newImag);
+            TempObject.AddToTempHeader(newHeader);
+            TempObject.AddToTempText(newText);
             return Content("Success :)");
         }
         private ProjectContentModel CreateContent(List<ProjectHeadersModel> headerList, List<ProjectTextModel> textList, List<ProjectImageModel> imageList, ApplicationDbContext db)

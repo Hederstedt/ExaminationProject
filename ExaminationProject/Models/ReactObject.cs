@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ExaminationProject.Models.ProjektModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,40 @@ namespace ExaminationProject.Models
     public static class TempObject
     {
         private static List<ReactObject> tempData;
+        private static List<ProjectImageModel> imageList;
+        private static List<ProjectHeadersModel> headerList;
+        private static List<ProjectTextModel> textList;
 
         static TempObject()
         {
             tempData = new List<ReactObject>();
+            imageList = new List<ProjectImageModel>();
+            headerList = new List<ProjectHeadersModel>();
+            textList = new List<ProjectTextModel>();
+        }
+        public static void AddToTempText(ProjectTextModel t)
+        {
+            textList.Add(t);
+        }
+        public static List<ProjectTextModel> GetTempText()
+        {
+            return textList;
+        }
+        public static void AddToTempHeader(ProjectHeadersModel h)
+        {
+            headerList.Add(h);
+        }
+        public static List<ProjectHeadersModel> GetTempHeader()
+        {
+            return headerList;
+        }
+        public static void AddToTempImage(ProjectImageModel i)
+        {
+            imageList.Add(i);
+        }
+        public static List<ProjectImageModel> GetTempImage()
+        {
+            return imageList;
         }
         public static void AddToTemp(ReactObject r)
         {

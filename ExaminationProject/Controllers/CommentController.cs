@@ -28,7 +28,7 @@ namespace ExaminationProject.Controllers
             {
                 new ProjectCommentModel
                 {
-                    Id = new Guid(),
+                    Id = _comments.Count+1,
                     Author = "Mike",
                     Text = "Detta är bara test data",
                     TimeStamp = DateTime.Now
@@ -51,7 +51,7 @@ namespace ExaminationProject.Controllers
         public IActionResult AddComment(ProjectCommentModel comment)
         {
             // Create a fake ID for this comment
-            comment.Id = new Guid();
+            comment.Id = DateTime.Now.Minute;
             //comment.Author = _userManager.GetUserName(User);
             //comment.TimeStamp = DateTime.Now;
             _comments.Add(comment);

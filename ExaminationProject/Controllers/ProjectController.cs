@@ -30,9 +30,15 @@ namespace ExaminationProject.Controllers
         // GET: /<controller>/
         public async Task<IActionResult> IndexAsync()
         {
+
             var user = await GetCurrentUserAsync();
-            var projects = user.Projects;
-            return View(projects.OrderBy(x => x.ProjectName).ToList());
+            if (user != null)
+            {
+                var projects = user.Projects;
+                return View(projects.OrderBy(x => x.ProjectName).ToList());
+            }
+            return View();
+
         }
         // GET: /<controller>/
         public IActionResult CreateProject()
